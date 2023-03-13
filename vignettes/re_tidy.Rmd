@@ -1,0 +1,51 @@
+---
+title: "re_tidy"
+author: "Leano Meier"
+date: "2023-03-06"
+output: html_document
+---
+
+#Perform the following steps:
+
+1. Manually clean the data in the tab “Database S1” and save it as a CSV file that can be read into R.
+
+2. In R, aggregate data per experiment and calculate the log-response ratio within each experiment.
+
+3. Aggregate data across all experiments for different years since the start of the experiment, distinguishing    an early phase (<3 years since start), a mid-phase (3-6 years since start), and a late phase (>6 years since    start). Calculate the log-response ratio for each phase.
+
+#Data input
+```{r}
+library(tidyverse)
+#read dataset with read_csv2(), because of semikolon seperator
+dataset1 <- readr::read_csv2("~/Desktop/Uni Bern/AGDS1/agds_report_leanomeier/data/1249534s1-s6.csv")
+```
+
+#calculate the log response ratio per experiment
+```{r}
+#calculate log response rate per datapoint
+dataset1$log_response_rate <- log(dataset1$mean_increased_CO2/dataset1$mean_ambient_CO2)
+#calculate mean log response rate per experiment
+log_response_per_experiment <- dataset1 %>%
+  group_by(dataset1$Experiment) %>% 
+  summarise(log_response_rate = mean(dataset1$log_response_rate))
+```
+
+#Aggregate data across all experiments for different phases
+```{r}
+#making phases
+dataset1$phase <- 0
+for(i in 1:length(dataset1$Durration_years)){
+  if(dataset1$Durration_years[i] < 3){
+  dataset1$phase[i] <- 1
+  }else if(dataset1$Durration_years[i] >=3 && dataset1$Durration_years[i] <= 6){
+  dataset1$phase[i] <- 2
+  }else if(dataset1$Durration_years[i] >6){
+  dataset1$phase[i] <- 3
+  }
+}
+#log response per phase
+log_response_per_phase <- dataset1 %>%
+  group_by(dataset1$phase) %>%
+  summarise(log_response_rate_phase = mean(dataset1$log_response_rate))
+```
+

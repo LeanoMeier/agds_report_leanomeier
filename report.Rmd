@@ -1,0 +1,9 @@
+---
+title: "report"
+author: "Leano Meier"
+date: "2023-02-27"
+output: html_document
+---
+
+#File for the reporte due at the end of the semester
+
