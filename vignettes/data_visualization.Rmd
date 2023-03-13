@@ -1,0 +1,18 @@
+---
+title: "data_visualization"
+author: "Leano Meier"
+date: "2023-03-13"
+output: html_document
+---
+```{r}
+library(tidyverse)
+airquality_data <- datasets::airquality
+
+class(airquality_data$Month)
+airquality_data$Date <-  as.character(airquality_data$Month) + as.character(airquality_data$Day)
+airquality_data$Month + 
+
+ggplot(data = airquality_data, aes(x = Month, y = Solar.R)) +
+  geom_line()
+```
+
