@@ -7,12 +7,22 @@ output: html_document
 ```{r}
 library(tidyverse)
 airquality_data <- datasets::airquality
+#adding Date
+airquality_data$Date <- seq(as.Date("1973/05/01"), as.Date("1973/09/30"), 1)
 
-class(airquality_data$Month)
-airquality_data$Date <-  as.character(airquality_data$Month) + as.character(airquality_data$Day)
-airquality_data$Month + 
+plot(airquality_data$Date, airquality_data$Ozone, col = as.factor(airquality_data$Solar.R))
 
-ggplot(data = airquality_data, aes(x = Month, y = Solar.R)) +
+ggplot(data = airquality_data, aes(x = Date, y = Temp)) +
   geom_line()
+
+ggplot(
+    data = airquality_data,
+    aes(x = Date, y = Temp)) +
+  geom_line() +
+  geom_point(aes(color = Solar.R), size = 0.9) +
+  labs(x = "Time", 
+       y = expression(paste("Temperature (F)"))) +
+  scale_color_viridis_c(direction = 1) + # inverse color scale is more intuitive here
+  theme_classic()
 ```
 
