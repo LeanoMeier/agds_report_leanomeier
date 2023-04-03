@@ -8,16 +8,10 @@ output: html_document
 library(tidyverse)
 airquality_data <- datasets::airquality
 
-#adding Date
+#adding Date, retrieved from the metadata, to the dataset
 airquality_data$Date <- seq(as.Date("1973/05/01"), as.Date("1973/09/30"), 1)
 
-plot(airquality_data$Date, airquality_data$Ozone, col = as.factor(airquality_data$Solar.R))
-
-ggplot(data = airquality_data, aes(x = Date, y = Temp)) +
-  geom_line()
-
-
-#Plot of the Daily Temperature with the solar radiation at the same time
+#Plot of the daily temperature over time together with the solar radiation at this day
 ggplot(
     data = airquality_data,
     aes(x = Date, y = Temp)) +
@@ -26,17 +20,39 @@ ggplot(
   labs(
     title = "Maximum daily temperature at La Guardia Airport",
     y     = "Temperature (°F)",
-    x     = "Date (1973)") +
+    x     = "Year 1973") +
     scale_color_viridis_c(direction = 1) + # inverse color scale is more intuitive here
-    scale_color_viridis_c("Solar radiation") +
+    scale_color_viridis_c("Solar radiation (lang)") +
     theme_classic()
 
 ```
 
 
 ```{r}
-ggplot(airquality_data, aes(y = Ozone)) + 
-    geom_boxplot()
+#Plot of the daily temperature in relation to the wind speed at La Guardia
+ggplot(
+  data = airquality_data,
+  aes(x = Wind, y = Temp)) +
+  geom_point(size = 1) +
+  geom_smooth(method = "lm", color = "red") +
+  labs(title = "Wind and Temperature Correlation",
+       x = expression(paste("Wind (mph)")), 
+       y = expression(paste("Temperature (°F)"))) +
+  theme_classic()
+
+```
+```{r}
+#Number of missing Values (NA) in the Ozone column
+sum(is.na(airquality_data$Ozone))
+
+#Boxplot of the Ozone data showing the Outliers
+ggplot(
+  data = airquality_data,
+  aes(y = Ozone)) +
+  geom_boxplot(fill = "grey70", outlier.color = "red", outlier.shape = 18, outlier.size = 3) +
+  labs(title = "Boxplot") +
+  labs(y = "Ozone (lang)") +
+  theme_classic()
 ```
 
 
