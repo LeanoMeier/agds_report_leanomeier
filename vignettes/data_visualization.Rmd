@@ -66,10 +66,11 @@ ggplot(
 ```
 
 ##Data description
-#Statistical calculations and visualisations
+#Statistical calculations and visualizations
 ```{r}
 #statistical characteristics of the dataset
 summary(airquality_data)
+#plots for the visualization of the datasets
 ozone <- ggplot(
     data = airquality_data,
     aes(x = Ozone, y = ..density..)
@@ -103,9 +104,11 @@ temp <- ggplot(
   geom_density(color = "red") +  
   labs(x = expression(paste("Air temperature (°F)"))) +
   theme_classic()
+#combine the four plots
 plot_grid(ozone, solarR, wind, temp,
           labels = c("", "", "", ""),
           ncol = 2, nrow = 2)
+#calculate some statistical metrics
 var(airquality_data$Wind)
 var(airquality_data$Temp)
 sd(airquality_data$Ozone, na.rm = T)
