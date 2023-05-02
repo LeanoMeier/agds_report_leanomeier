@@ -1,0 +1,28 @@
+---
+title: "re_stepwise"
+author: "Leano Meier"
+date: "2023-05-02"
+output: html_document
+---
+
+##GPP prediction as a function of the available predictors
+
+#Data generating and environment set up
+```{r}
+library(tidyverse)
+#read dataset with comma as delimiter
+flux_data<- readr::read_delim("~/Desktop/Uni Bern/AGDS1/agds_report_leanomeier/data/df_for_stepwise_regression.csv", delim = ",") #path may have to be updated to your directory for reproduction of the results
+```
+
+#Creating bivariate models (single predictor) to predict the GPP
+```{r}
+# numerical variables only, remove NA
+df <- flux_data %>%
+  dplyr::select(-starts_with("TIMESTAMP")) %>%
+  tidyr::drop_na()
+
+# fit univariate linear regression
+linmod1 <- lm(GPP_NT_VUT_REF ~ TA_F, data = df)
+```
+
+#stepwise forward regression
