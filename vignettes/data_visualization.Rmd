@@ -4,8 +4,13 @@ author: "Leano Meier"
 date: "2023-03-13"
 output: html_document
 ---
+
+##Plots
+#Plot of the maximum daily temperature at La Guardia Airport
 ```{r}
 library(tidyverse)
+library(ggplot2)
+library(cowplot)
 airquality_data <- datasets::airquality
 
 #adding Date, retrieved from the metadata, to the dataset
@@ -27,7 +32,7 @@ ggplot(
 
 ```
 
-
+#Plot of the correlation between the maximum daily temperature in relation to the wind speed at La Guardia Airport
 ```{r}
 #Plot of the daily temperature in relation to the wind speed at La Guardia
 ggplot(
@@ -41,18 +46,80 @@ ggplot(
   theme_classic()
 
 ```
+#Plot of the correlation between ozone concentration and air temperature
 ```{r}
 #Number of missing Values (NA) in the Ozone column
 sum(is.na(airquality_data$Ozone))
 
-#Boxplot of the Ozone data showing the Outliers
+#plot of the correlation between ozone concentration and air temperature
 ggplot(
   data = airquality_data,
-  aes(y = Ozone)) +
-  geom_boxplot(fill = "grey70", outlier.color = "red", outlier.shape = 18, outlier.size = 3) +
-  labs(title = "Boxplot") +
-  labs(y = "Ozone (lang)") +
+  aes(x = Ozone, y = Temp)) +
+  geom_point(size = 1, ) +
+  geom_smooth(method = "lm", color = "red",) +
+  labs(title = "Ozone and Temperature Correlation",
+       x = expression(paste("Ozone (ppm)")), 
+       y = expression(paste("Temperature (°F)"))) +
   theme_classic()
+
+
 ```
+
+##Data description
+#Statistical calculations and visualisations
+```{r}
+#statistical characteristics of the dataset
+summary(airquality_data)
+ozone <- ggplot(
+    data = airquality_data,
+    aes(x = Ozone, y = ..density..)
+    ) +
+  geom_histogram(fill = "grey70", color = "black") +
+  geom_density(color = "red") +  
+  labs(title = "Histogram and density", 
+       x = expression(paste("Ozone (ppm)"))) +
+  theme_classic()
+solarR <- ggplot(
+    data = airquality_data,
+    aes(x = Solar.R, y = ..density..)
+    ) +
+  geom_histogram(fill = "grey70", color = "black") +
+  geom_density(color = "red") +  
+  labs(x = expression(paste("Solar radiation (lang)"))) +
+  theme_classic()
+wind <- ggplot(
+    data = airquality_data,
+    aes(x = Wind, y = ..density..)
+    ) +
+  geom_histogram(fill = "grey70", color = "black") +
+  geom_density(color = "red") +  
+  labs(x = expression(paste("Wind (mph)"))) +
+  theme_classic()
+temp <- ggplot(
+    data = airquality_data,
+    aes(x = Temp, y = ..density..)
+    ) +
+  geom_histogram(fill = "grey70", color = "black") +
+  geom_density(color = "red") +  
+  labs(x = expression(paste("Air temperature (°F)"))) +
+  theme_classic()
+plot_grid(ozone, solarR, wind, temp,
+          labels = c("", "", "", ""),
+          ncol = 2, nrow = 2)
+var(airquality_data$Wind)
+var(airquality_data$Temp)
+sd(airquality_data$Ozone, na.rm = T)
+sd(airquality_data$Solar.R, na.rm = T)
+
+```
+#Description
+The datasets are all differently distributed. The wind and temperature datasets have a median and mean that are close together (wind: median = 9.7, mean = 9.9; temp: median = 79, mean = 77.8) and are therefore nearly normal distributed. When we take a look at the variance of the wind (12.4) and temperature (89.6), we can see that the data in these sets are distributed relatively close together. The ozone and solar radiation dataset have a larger difference in the before mentioned statistical metrics, but also have a high standard deviation of 33.0, respectively 90.1 which show that the data are more spread out. 
+
+
+
+##Discussion
+The data shown in the plots above cover data conceived in New York from the 1st of May 1973 to the 30th of September 1973. In the first plot, about the maximum daily air temperature, we can observe an expected rise of the temperature throughout the summer months June, July and August. There are just a few exceptions that show a significant drop in temperature during this time. To try and explain these drops, attached to the daily temperature are the solar radiation levels of that same day. When comparing these low summer temperatures with the solar radiation we can see that the local minima always show low values for solar radiation. This could be an explanation to why the surface of the earth did not receive much energy and therefore could not reemit a lot of heat and warm up the air.
+But not only the solar radiation can contribute to the temperature of the air. Wind also plays a big role in regulating the air temperature through the exchange and mixing of air masses. To show the effect, that Wind can have on the air temperature plot two shows a correlation between the two variables. Even though there are some uncertainties, we can see a clear trend, that with increasing wind speed, the temperature gets cooler. When we put that finding into context with the situation at LA Guardia Airport, we can see that it makes sense. When we have none or little wind, the air over the paved runway stays in one place and heats up quickly from the runway that emits heat, retrieved from solar energy of the sun. On the other hand, at higher Wind speeds, the air over the runway mixes itself with colder air from the neighboring bay area.
+The third plot shows us the correlation of the ozone concentration and the air temperature. Although we can see a good fitting correlation line in red, we must be cautious, because there are a lot of missing values in this data set. But the trend line still shows a clear relation that the more ozone there is, the warmer it is.
 
 
