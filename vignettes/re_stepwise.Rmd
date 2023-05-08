@@ -23,6 +23,52 @@ df <- flux_data %>%
 
 # fit univariate linear regression
 linmod1 <- lm(GPP_NT_VUT_REF ~ TA_F, data = df)
+summary(linmod1)
+
+df %>%
+  ggplot(aes(x = TA_F, y = GPP_NT_VUT_REF)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(formula = y ~ x, method = "lm", aes(color = "lm"), se = FALSE) +
+  labs(x = "SW", y = "GPP", color = "Regression") +
+  theme_classic()
+
+compute_regr_metrics <- function(mod){
+  
+  p <- length(mod$coefficients)
+  n <- length(mod$residuals)
+  
+  tibble(
+    mse = mean(mod$residuals^2),
+    R2 = summary(mod)$r.squared,
+    R2_adj = summary(mod)$adj.r.squared,
+    AIC = extractAIC(mod)[2],
+    AIC_adj = extractAIC(mod)[2] + 2*(p+2)*(p+3)/(n-p-3),
+    BIC = BIC(mod) # this implementation is based on log-likelihood
+  )
+}
+
+list_metrics <- purrr::map(
+    list(linmod1), 
+    ~compute_regr_metrics(.))
+names(list_metrics) <- c("Linear model")
+bind_rows(list_metrics, .id = "type")
+
+name <- list()
+r_squared <- list()
+
+df[,2]
+colnames <- colnames(df)
+colnames
+
+for( i in 2:length(df) ){
+  linmod <- lm(GPP_NT_VUT_REF ~ df[,colnames[i]], data = df) #does not work because list is the wrong type for X
+  r2 = summary(linmod)$r.squared
+  name <- append(name, paste("linmod", as.character(i)))
+  r_squared <- append(r_squared, r2)
+}
+
+regressionDF <- map2_dfr(name, r_squared, ~ tibble(A = .x, B = .y))
+print(regressionDF)
 ```
 
 #stepwise forward regression

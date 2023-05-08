@@ -7,3 +7,13 @@ output: html_document
 
 #File for the reporte due at the end of the semester
 
+knn needs to be standardized (same Einheit)
+rmse to check -> low score is good
+check with new validation data because poly 15 could fit trainingdata well but could overfit new data
+lm with poly specified
+
+training set and testing set split
+training set split into trainingg set and validation set
+k fold cross validation
+each time we chose a different part as validation set
+2-3 visualizations with most important facts
